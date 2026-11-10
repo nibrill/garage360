@@ -12,6 +12,6 @@ Si encuentras un problema de seguridad, **no abras un issue público**. Usa la p
 - Cookies de sesión y CSRF `Secure` cuando `DEBUG=False`.
 - Las cuentas creadas por `seed --demo` usan una clave pública conocida: **no ejecutes `--demo` en producción**.
 
-## Si desplegaste una versión anterior (FixSpot)
+## Si desplegaste una versión anterior (FixSpot, hoy Garage360)
 
 El repositorio original incluía claves y datos de usuarios en su historial. Ese historial fue reescrito, pero debes asumir que las claves antiguas están comprometidas: revócalas y cambia `SECRET_KEY` y las contraseñas de base de datos.

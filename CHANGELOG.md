@@ -4,18 +4,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [2.0.0] - 2026-11-10
 
-Renombrado de **FixSpot** a **TallerYa** y renovación completa.
+Renombrado de **FixSpot** a **Garage360** y renovación completa. **MySQL 8 es la base de datos del proyecto.**
 
 ### Agregado
 - Nuevo diseño responsive, logo, favicon y metadatos SEO (Open Graph, `robots.txt`, `sitemap.xml`).
 - Buscador de talleres por nombre y comuna; panel de administración con métricas.
 - Comando `seed` (catálogos y datos de demostración).
 - Suite de 21 tests y CI con GitHub Actions.
-- Dockerfile, `docker-compose.yml` y `render.yaml`.
+- `database/init.sql` y `database/schema.sql`; documentación de la base de datos.
 - Documentación: README, arquitectura, API, seguridad y guía de contribución.
 
 ### Cambiado
-- SQLite por defecto; MySQL opcional vía variables de entorno.
+- MySQL 8 como base de datos por defecto (driver PyMySQL, utf8mb4); SQLite solo como atajo de desarrollo.
+- Dockerfile y `docker-compose.yml` incluyen MySQL con healthcheck y volumen persistente.
+- CI ejecuta los tests contra MySQL 8 y SQLite.
 - Geocodificación con OpenStreetMap si no hay clave de OpenCage.
 - Se reemplazó `django-crispy-forms` por un parcial propio compatible con Django 6.
 

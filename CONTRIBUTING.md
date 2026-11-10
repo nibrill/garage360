@@ -1,12 +1,13 @@
 # Cómo contribuir
 
-¡Gracias por querer mejorar TallerYa!
+¡Gracias por querer mejorar Garage360!
 
 ## Entorno de desarrollo
 
 ```bash
-git clone https://github.com/nibrill/tallerya.git
-cd tallerya
+git clone https://github.com/nibrill/garage360.git
+cd garage360
+mysql -u root -p < database/init.sql                 # BD y usuario de MySQL
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate

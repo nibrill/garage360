@@ -1,9 +1,9 @@
 # Arquitectura
 
-TallerYa es una aplicación Django monolítica con una única app (`core`) y plantillas renderizadas en el servidor (Bootstrap 5 + un poco de jQuery/SweetAlert2).
+Garage360 es una aplicación Django monolítica con una única app (`core`) y plantillas renderizadas en el servidor (Bootstrap 5 + un poco de jQuery/SweetAlert2).
 
 ```
-tallerya/                 Proyecto Django (settings, urls, wsgi/asgi)
+garage360/                 Proyecto Django (settings, urls, wsgi/asgi)
 core/
   models.py               Modelo de datos
   views.py                Vistas, decoradores de rol y ViewSets de la API
@@ -57,7 +57,7 @@ El control se hace con el decorador `role_required` (redirige a login si no hay 
 sequenceDiagram
     participant C as Cliente
     participant T as Encargado
-    participant S as TallerYa
+    participant S as Garage360
     C->>S: Elige taller, fecha y hora libre
     S-->>C: Reserva creada (estado "En proceso")
     T->>S: Emite reporte de pago (monto y comentario)
@@ -74,6 +74,8 @@ Las horas disponibles son de 9:00 a 18:00, de lunes a viernes; una hora ya reser
 
 ## Decisiones de diseño
 
-- **SQLite por defecto**: cero fricción para probar; MySQL opcional por variables de entorno.
-- **Sin dependencias de servicios pagos obligatorios**: la geocodificación y el mapa funcionan sin claves.
+- **MySQL 8 (InnoDB, utf8mb4)** como base de datos del proyecto; claves foráneas y transacciones gestionadas por el ORM de Django. Ver [DATABASE.md](DATABASE.md).
+- **PyMySQL** como driver por defecto: puro Python, sin compilar, funciona igual en Windows, Linux y Docker. Si existe `mysqlclient`, se usa en su lugar.
+- **Sin servicios de pago obligatorios**: la geocodificación y el mapa funcionan sin claves de API.
 - **WhiteNoise** para estáticos y **gunicorn** como servidor, de modo que la misma imagen sirva en cualquier plataforma.
+- **SQLite solo como atajo de desarrollo** (`DB_ENGINE=sqlite`); el CI prueba ambos motores.
