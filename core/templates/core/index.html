@@ -4,53 +4,116 @@
 {% block contenido %}
 <!-- HERO -->
 <section class="hero">
+    <div class="aurora"><i></i></div>
+    <div class="grid-bg"></div>
     <div class="container">
-        <div class="row align-items-center gy-4">
+        <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <h1>Encuentra el taller mecánico <span>ideal</span> y reserva en minutos</h1>
-                <p class="lead mt-3 mb-4">La forma más fácil de cuidar tu vehículo: compara talleres cerca de ti, agenda tu hora y paga en línea, sin llamadas ni esperas.</p>
-                <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
-                    <a href="{% url 'talleres' %}" class="btn btn-primary btn-lg px-4"><i class="fa-solid fa-magnifying-glass me-2"></i>Ver talleres</a>
-                    <a href="{% url 'mapa' %}" class="btn btn-outline-light btn-lg px-4"><i class="fa-solid fa-map-location-dot me-2"></i>Abrir mapa</a>
-                </div>
-                <div class="d-flex gap-4 mt-4 justify-content-center justify-content-lg-start">
-                    <div><div class="stat">{{ total_talleres }}</div><div class="stat-label">talleres disponibles</div></div>
-                    <div><div class="stat">24/7</div><div class="stat-label">reserva en línea</div></div>
+                <span class="eyebrow reveal"><span class="dot"></span> Reservas abiertas 24/7</span>
+                <h1 class="mt-4 reveal" style="--d:.08s">Tu taller mecánico, <span class="gradient-text">a un clic</span> de distancia.</h1>
+                <p class="lead mt-4 reveal" style="--d:.16s">Compara talleres cerca de ti, elige día y hora libres y paga en línea. Sin llamadas, sin esperas, sin sorpresas.</p>
+
+                <form class="search-card mt-4 reveal" style="--d:.24s" action="{% url 'talleres' %}" method="get" role="search">
+                    <label class="field">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" name="q" placeholder="¿Qué necesita tu auto?" aria-label="Buscar taller o servicio">
+                    </label>
+                    <label class="field">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <select name="comuna" aria-label="Comuna">
+                            <option value="">Todas las comunas</option>
+                            {% for c in comunas %}<option value="{{ c.idComuna }}">{{ c.nombreComuna }}</option>{% endfor %}
+                        </select>
+                    </label>
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </form>
+
+                <div class="stat-strip mt-5 reveal" style="--d:.32s">
+                    <div><div class="num" data-count="{{ total_talleres }}">0</div><div class="lbl">talleres</div></div>
+                    <div><div class="num" data-count="{{ total_comunas }}">0</div><div class="lbl">comunas</div></div>
+                    <div><div class="num" data-count="{{ total_servicios }}">0</div><div class="lbl">tipos de servicio</div></div>
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
-                <img src="{% static 'core/img/mecanico-dibujo.png' %}" class="img-fluid" alt="Mecánico trabajando">
+
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="glass-card mock m1">
+                        <div class="row-line">
+                            <div class="ico"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div><b>Reserva confirmada</b><small>Cambio de aceite · mañana 10:00</small></div>
+                            <span class="pill ms-auto"><i class="fa-solid fa-check text-success"></i> Listo</span>
+                        </div>
+                        <div class="slot-row">
+                            <span class="slot">09:00</span><span class="slot on">10:00</span><span class="slot">11:00</span><span class="slot">15:00</span><span class="slot">16:00</span>
+                        </div>
+                    </div>
+                    <div class="glass-card mock m2">
+                        <div class="row-line">
+                            <div class="ico warm"><i class="fa-solid fa-location-dot"></i></div>
+                            <div><b>3 talleres cerca</b><small>Providencia · Las Condes · Ñuñoa</small></div>
+                        </div>
+                    </div>
+                    <div class="glass-card mock m3">
+                        <div class="row-line">
+                            <div class="ico green"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div><b>Pago seguro</b><small>Comprobante al instante</small></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- BENEFICIOS -->
-<section class="container py-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">¿Qué hacemos por ti?</h2>
-        <p class="text-secondary mb-0">Te ahorramos tiempo y preocupaciones.</p>
+<!-- MARQUEE DE SERVICIOS -->
+<div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+        {% for i in "12" %}
+        <span><i class="fa-solid fa-oil-can"></i> Cambio de aceite</span>
+        <span><i class="fa-solid fa-circle-stop"></i> Frenos</span>
+        <span><i class="fa-solid fa-gear"></i> Diagnóstico de motor</span>
+        <span><i class="fa-solid fa-car-tunnel"></i> Alineación y balanceo</span>
+        <span><i class="fa-solid fa-life-ring"></i> Neumáticos</span>
+        <span><i class="fa-solid fa-car-burst"></i> Suspensión</span>
+        <span><i class="fa-solid fa-clipboard-check"></i> Revisión técnica</span>
+        <span><i class="fa-solid fa-screwdriver-wrench"></i> Mantención programada</span>
+        {% endfor %}
     </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="feature">
-                <div class="icon"><i class="fa-solid fa-location-dot"></i></div>
-                <h5 class="fw-bold">Encuentra fácil</h5>
-                <p class="text-secondary mb-0">Los talleres mecánicos más cerca que nunca, con mapa y filtros por comuna.</p>
-            </div>
+</div>
+
+<!-- BENTO -->
+<section class="section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="eyebrow mb-3">Por qué Garage360</span>
+            <h2>Todo lo que necesitas, <span class="gradient-text">en un solo lugar</span></h2>
+            <p>Una plataforma pensada para conductores, talleres y administradores.</p>
         </div>
-        <div class="col-md-4">
-            <div class="feature">
-                <div class="icon"><i class="fa-solid fa-clock"></i></div>
-                <h5 class="fw-bold">Reservas rápidas</h5>
-                <p class="text-secondary mb-0">Elige día y hora disponibles y recibe tu reserva al instante.</p>
+        <div class="bento">
+            <div class="tile span-4 reveal">
+                <div class="icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h3>Mapa interactivo en tiempo real</h3>
+                <p>Descubre talleres alrededor tuyo con geolocalización. Toca un marcador, revisa el detalle y agenda sin salir del mapa.</p>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature">
-                <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
-                <h5 class="fw-bold">Seguro y confiable</h5>
-                <p class="text-secondary mb-0">Revisa el detalle de tu reparación y paga en línea de forma segura.</p>
+            <div class="tile hl reveal" style="--d:.08s">
+                <div class="icon"><i class="fa-solid fa-bolt"></i></div>
+                <h3>Reserva en 30 segundos</h3>
+                <p>Solo se muestran horas realmente libres.</p>
+            </div>
+            <div class="tile reveal">
+                <div class="icon"><i class="fa-solid fa-car-side"></i></div>
+                <h3>Tu garaje digital</h3>
+                <p>Guarda tus vehículos y reserva con un par de toques.</p>
+            </div>
+            <div class="tile reveal" style="--d:.08s">
+                <div class="icon"><i class="fa-solid fa-credit-card"></i></div>
+                <h3>Pago en línea</h3>
+                <p>Revisa el detalle de la reparación, paga y descarga tu comprobante.</p>
+            </div>
+            <div class="tile reveal" style="--d:.16s">
+                <div class="icon"><i class="fa-solid fa-user-shield"></i></div>
+                <h3>Roles y permisos</h3>
+                <p>Clientes, encargados y administradores con paneles propios.</p>
             </div>
         </div>
     </div>
@@ -58,44 +121,92 @@
 
 <!-- TALLERES DESTACADOS -->
 {% if talleres_destacados %}
-<section class="container py-4">
-    <div class="d-flex justify-content-between align-items-end mb-4">
-        <h2 class="fw-bold mb-0">Talleres destacados</h2>
-        <a href="{% url 'talleres' %}" class="fw-semibold text-decoration-none">Ver todos <i class="fa-solid fa-arrow-right"></i></a>
-    </div>
-    <div class="row g-4">
-        {% for taller in talleres_destacados %}
-        <div class="col-md-6 col-lg-4">
-            <div class="taller-card">
-                <img class="thumb" src="{{ taller.imagen.url }}" alt="{{ taller.nombreTaller }}" loading="lazy">
-                <div class="body">
-                    <h5 class="fw-bold">{{ taller.nombreTaller }}</h5>
-                    {% if taller.idComuna %}<span class="badge badge-comuna rounded-pill align-self-start mb-2">{{ taller.idComuna }}</span>{% endif %}
-                    <p class="meta mb-3"><i class="fa-solid fa-location-dot"></i>{{ taller.direccion }}</p>
-                    <a href="{% url 'agendar_hora' taller.idTaller %}" class="btn btn-primary mt-auto">Agendar hora</a>
+<section class="section pt-0">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4 reveal">
+            <div>
+                <span class="eyebrow mb-3">Cerca de ti</span>
+                <h2 class="mb-0" style="font-size:clamp(1.8rem,3.5vw,2.6rem)">Talleres destacados</h2>
+            </div>
+            <a href="{% url 'talleres' %}" class="btn btn-ghost">Ver todos <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for taller in talleres_destacados %}
+            <div class="col-md-6 col-lg-4 reveal" style="--d:{{ forloop.counter0 }}00ms">
+                <div class="taller-card">
+                    <div class="thumb-wrap">
+                        <img class="thumb" src="{{ taller.imagen.url }}" alt="{{ taller.nombreTaller }}" loading="lazy">
+                        {% if taller.idComuna %}<span class="pill"><i class="fa-solid fa-location-dot"></i> {{ taller.idComuna }}</span>{% endif %}
+                    </div>
+                    <div class="body">
+                        <h5>{{ taller.nombreTaller }}</h5>
+                        <p class="meta"><i class="fa-solid fa-road"></i>{{ taller.direccion }}</p>
+                        <a href="{% url 'agendar_hora' taller.idTaller %}" class="btn btn-primary mt-3">Agendar hora</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </section>
 {% endif %}
 
 <!-- CÓMO FUNCIONA -->
-<section class="container py-5">
-    <div class="row align-items-center g-5">
-        <div class="col-lg-6 steps">
-            <h2 class="fw-bold mb-4">Así de simple</h2>
-            <div class="step"><h5 class="fw-bold mb-1">Crea tu cuenta y registra tu vehículo</h5><p class="text-secondary mb-0">Guarda tus autos con patente, marca y año.</p></div>
-            <div class="step"><h5 class="fw-bold mb-1">Elige un taller y una hora</h5><p class="text-secondary mb-0">Solo se muestran los horarios realmente disponibles.</p></div>
-            <div class="step"><h5 class="fw-bold mb-1">Paga y descarga tu comprobante</h5><p class="text-secondary mb-0">El taller te envía el detalle y pagas en línea.</p></div>
-        </div>
-        <div class="col-lg-6">
-            <div class="cta text-center">
-                <h3 class="fw-bold">¿Necesitas ayuda?</h3>
-                <p class="mb-4">Escríbenos y uno de nuestros ejecutivos te ayudará con lo que necesites.</p>
-                <a href="{% url 'contactanos' %}" class="btn btn-light btn-lg px-4">Contactar</a>
+<section class="section">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5 reveal">
+                <span class="eyebrow mb-3">Cómo funciona</span>
+                <h2 style="font-size:clamp(1.9rem,4vw,3rem)">De la idea a la <span class="gradient-text">reserva</span> en tres pasos</h2>
+                <p class="text-secondary mt-3">Sin formularios eternos ni llamadas. Todo el proceso es digital, transparente y rápido.</p>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg mt-3">Empezar gratis</a>
             </div>
+            <div class="col-lg-6 offset-lg-1">
+                <div class="steps">
+                    <div class="step reveal"><div class="n">1</div><div><h4>Crea tu cuenta y guarda tu auto</h4><p>Patente, marca y año. Listo para futuras reservas.</p></div></div>
+                    <div class="step reveal" style="--d:.1s"><div class="n">2</div><div><h4>Elige taller, día y hora</h4><p>Compara por comuna y reserva en un horario disponible.</p></div></div>
+                    <div class="step reveal" style="--d:.2s"><div class="n">3</div><div><h4>Paga y descarga tu comprobante</h4><p>El taller emite el detalle y tú pagas en línea.</p></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section pt-0">
+    <div class="container" style="max-width:820px">
+        <div class="section-head reveal">
+            <h2>Preguntas frecuentes</h2>
+        </div>
+        <div class="accordion reveal" id="faq">
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1">¿Cuánto cuesta usar Garage360?</button></h3>
+                <div id="f1" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Para los clientes es gratis. Solo pagas la reparación al taller.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">¿Qué horarios puedo reservar?</button></h3>
+                <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">De lunes a viernes entre 09:00 y 18:00. Las horas ya tomadas no aparecen.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3">¿Cómo pago?</button></h3>
+                <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Cuando el taller emite el detalle de la reparación, aparece el botón «Ir a pagar» en Mis reservas. Luego descargas tu comprobante.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f4">Soy dueño de un taller, ¿puedo unirme?</button></h3>
+                <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Sí. Escríbenos desde la página de <a href="{% url 'contactanos' %}">contacto</a> y un administrador creará tu taller y tu cuenta de encargado.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="container pb-2">
+    <div class="cta reveal">
+        <h2>¿Listo para dejar de esperar al teléfono?</h2>
+        <p class="mb-4 mx-auto" style="max-width:34rem;opacity:.9">Crea tu cuenta en menos de un minuto y reserva tu primera hora hoy mismo.</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg">Crear cuenta</a>
+            <a href="{% url 'talleres' %}" class="btn btn-outline-light btn-lg">Explorar talleres</a>
         </div>
     </div>
 </section>

@@ -1,3 +1,4 @@
+import json
 from datetime import time
 from decimal import Decimal
 from functools import wraps
@@ -143,11 +144,19 @@ def index(request):
     return render(request, 'core/index.html', {
         'talleres_destacados': Taller.objects.select_related('idComuna')[:3],
         'total_talleres': Taller.objects.count(),
+        'total_comunas': Comuna.objects.count(),
+        'total_servicios': TipoAgenda.objects.count(),
+        'comunas': Comuna.objects.order_by('nombreComuna'),
     })
 
 
 def sobre_nosotros(request):
-    return render(request, 'core/sobre_nosotros.html')
+    equipo = [
+        ('Nicolás Brill', 'Administrador'),
+        ('Nicolás Rojas', 'Administrador'),
+        ('Carolina Acuña', 'Administradora'),
+    ]
+    return render(request, 'core/sobre_nosotros.html', {'equipo': equipo})
 
 
 def register(request):
@@ -199,7 +208,7 @@ def talleres(request):
 @login_required
 def mapa(request):
     talleres = Taller.objects.all()
-    talleres_json = serialize('json', talleres, fields=('nombreTaller', 'direccion', 'latitud', 'longitud'))
+    talleres_json = json.loads(serialize('json', talleres, fields=('nombreTaller', 'direccion', 'latitud', 'longitud')))
     return render(request, 'core/mapa.html', {'talleres_json': talleres_json})
 
 
@@ -352,6 +361,7 @@ def detalle_reserva(request, id_agenda):
 
     return render(request, 'core/detalle_reserva.html', {
         'agenda': agenda, 'reporte_pago': reporte_pago, 'monto_dolares': monto_dolares,
+        'paypal_client_id': settings.PAYPAL_CLIENT_ID,
     })
 
 

@@ -169,6 +169,9 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Client ID de PayPal (sandbox). Sin él, la pantalla de pago funciona en modo demostración.
+PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID', '')
+
 SERVE_MEDIA = env('SERVE_MEDIA', 'False').lower() in ('1', 'true', 'yes')
 
 # Clave opcional de OpenCage para geocodificar. Sin ella se usa OpenStreetMap (Nominatim).

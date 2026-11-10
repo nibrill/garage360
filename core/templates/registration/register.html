@@ -2,17 +2,32 @@
 {% block title %}Crear cuenta · Garage360{% endblock %}
 
 {% block contenido %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-9 col-lg-7">
-            <form method="POST" class="p-4 p-md-5">
-                {% csrf_token %}
-                <h1 class="h3 fw-bold text-center mb-4">Crea tu cuenta</h1>
-                {% include 'core/_form_fields.html' %}
-                <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Registrarme</button>
-                <p class="text-center text-secondary mt-4 mb-0">¿Ya tienes cuenta? <a href="{% url 'login' %}" class="fw-semibold">Inicia sesión</a></p>
-            </form>
+<section class="auth-shell">
+    <div class="aurora"><i></i></div>
+    <div class="container">
+        <div class="auth-card" style="max-width:1080px">
+            <div class="auth-side">
+                <div>
+                    <span class="pill" style="background:rgba(255,255,255,.18);color:#fff;border-color:transparent"><i class="fa-solid fa-gift"></i> Gratis para clientes</span>
+                    <h2 class="mt-4">Tu garaje digital empieza aquí</h2>
+                    <p style="opacity:.85">Crea tu cuenta, registra tu vehículo y reserva en el taller que prefieras.</p>
+                </div>
+                <ul>
+                    <li><i class="fa-solid fa-map-location-dot"></i> Talleres en un mapa interactivo</li>
+                    <li><i class="fa-solid fa-calendar-check"></i> Horas disponibles en tiempo real</li>
+                    <li><i class="fa-solid fa-receipt"></i> Pago y comprobante en línea</li>
+                </ul>
+            </div>
+            <div class="auth-form">
+                <form method="POST">
+                    {% csrf_token %}
+                    <h1 class="h2 mb-1">Crea tu cuenta</h1>
+                    <p class="text-secondary mb-4">¿Ya tienes una? <a href="{% url 'login' %}" class="fw-semibold">Inicia sesión</a></p>
+                    {% include 'core/_form_fields.html' %}
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Registrarme <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock contenido %}

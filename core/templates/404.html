@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block title %}Página no encontrada · Garage360{% endblock %}
+{% block contenido %}
+<section class="error-shell">
+    <div class="aurora"><i></i></div>
+    <div class="container">
+        <div class="error-code">404</div>
+        <h1 class="h2 mb-3">Esta página se quedó sin combustible</h1>
+        <p class="text-secondary mb-4">No encontramos lo que buscas. Puede que el enlace haya cambiado.</p>
+        <a href="{% url 'index' %}" class="btn btn-primary btn-lg">Volver al inicio</a>
+        <a href="{% url 'talleres' %}" class="btn btn-ghost btn-lg ms-2">Ver talleres</a>
+    </div>
+</section>
+{% endblock %}

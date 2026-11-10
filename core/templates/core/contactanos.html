@@ -1,83 +1,58 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% load ui %}
+{% block title %}Contacto · Garage360{% endblock %}
 
 {% block contenido %}
-<!-- INICIO ENCABEZADO -->
 <section class="page-hero">
-    <div class="container"><h1>Contáctanos</h1></div>
-</section>        
-<!-- FIN ENCABEZADO -->
+    <div class="container">
+        <span class="eyebrow mb-3"><i class="fa-solid fa-paper-plane"></i> Hablemos</span>
+        <h1>Contáctanos</h1>
+        <p>Déjanos tus datos: te responderemos por correo o te llamaremos según el asunto.</p>
+    </div>
+</section>
 
-<!-- CONTENIDO -->
-<div class="bg-page">
-<br>
-    <div class="container mb-5 mt-5 shadow-lg">
-        <div class="row">
-            <div class="col-md-6">
-                <form id="contact-form" action="{% url 'contactanos' %}" method="POST" class="p-4 shadow-lg bg-white rounded-4">
-                    {% csrf_token %}
-                    {% include 'core/_form_fields.html' %}
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill mt-5 d-flex text-center mx-auto">Enviar mensaje</button>
-                </form>
+<div class="container">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-7">
+            <form id="contact-form" action="{% url 'contactanos' %}" method="POST" class="p-4 p-md-5">
+                {% csrf_token %}
+                {% include 'core/_form_fields.html' %}
+                <button type="submit" class="btn btn-primary btn-lg mt-2">Enviar mensaje <i class="fa-solid fa-paper-plane ms-2"></i></button>
+            </form>
+        </div>
+        <div class="col-lg-5">
+            <div class="tile mb-3">
+                <div class="icon"><i class="fa-solid fa-clock"></i></div>
+                <h3>Respondemos rápido</h3>
+                <p>Normalmente en menos de un día hábil.</p>
             </div>
-            <div class="col-md-6 d-flex flex-column align-items-center">
-                <img class="w-100 h-auto rounded-3 mb-3" src="{% static 'core/img/contactus.webp' %}" alt="Contact Us">
-                <p class="text-center fs-5">Déjanos tus datos, te responderemos por correo o te llamaremos a tu teléfono dependiendo del asunto.</p>
+            <div class="tile mb-3">
+                <div class="icon"><i class="fa-solid fa-store"></i></div>
+                <h3>¿Tienes un taller?</h3>
+                <p>Cuéntanos y te ayudamos a publicarlo en Garage360.</p>
             </div>
+            <img class="img-fluid rounded-4 d-none d-lg-block" src="{% static 'core/img/contactus.webp' %}" alt="Ilustración de contacto" loading="lazy">
         </div>
     </div>
 </div>
-<!-- FINAL DEL CONTENIDO -->
 {% endblock %}
+
 {% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
+    document.getElementById('contact-form').addEventListener('submit', function (event) {
         event.preventDefault();
+        var form = this;
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Deseas enviar este mensaje?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, enviar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit();
-            }
-        });
+            title: '¿Enviar este mensaje?', icon: 'question', showCancelButton: true,
+            confirmButtonColor: '#7c5cff', confirmButtonText: 'Sí, enviar', cancelButtonText: 'Cancelar'
+        }).then(function (r) { if (r.isConfirmed) form.submit(); });
     });
-
     {% if form.errors %}
-    Swal.fire({
-        title: 'Error',
-        text: 'Hay algún problema con los datos ingresados, revise nuevamente.',
-        icon: 'error',
-        confirmButtonText: 'ACEPTAR'
-    });
-    {% elif form.non_field_errors %}
-    Swal.fire({
-        title: 'Error',
-        text: '{{ form.non_field_errors }}',
-        icon: 'error',
-        confirmButtonText: 'ACEPTAR'
-    });
-    {% endif %}
-
-    {% if messages %}
-    {% for message in messages %}
-    Swal.fire({
-        text: '{{ message }}',
-        icon: '{{ message.tags }}',
-        confirmButtonText: 'ACEPTAR'
-    });
-    {% endfor %}
+    Swal.fire({ title: 'Revisa los datos', text: 'Hay algún problema con los datos ingresados.', icon: 'error', confirmButtonColor: '#7c5cff' });
     {% endif %}
 </script>
 {% endblock js %}

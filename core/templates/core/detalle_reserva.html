@@ -1,207 +1,129 @@
 {% extends 'core/base.html' %}
+{% block title %}Pagar reserva · Garage360{% endblock %}
 
 {% block contenido %}
-<!-- INICIO ENCABEZADO -->
 <section class="page-hero">
-    <div class="container"><h1>Pagar reserva</h1></div>
+    <div class="container">
+        <span class="eyebrow mb-3"><i class="fa-solid fa-receipt"></i> Reserva #{{ agenda.idAgenda }}</span>
+        <h1>Detalle y pago</h1>
+        <p>Revisa el detalle de tu reparación antes de pagar.</p>
+    </div>
 </section>
-<!-- FIN ENCABEZADO -->
 
-<div class="bg-page">
-    <br>
-    <div class="container mt-4 shadow-lg">
-        <div class="card">
-            <div class="card-body shadow-lg">
-                <!-- Detalles de la Reserva -->
-                <h2 class="card-title fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle de la Reserva</h2>
-                <div class="table-responsive">
-                    <table class="table table-bordered shadow-lg">
-                        <tbody>
-                            <tr>
-                                <th style="width: 40%;">Fecha de Atención:</th>
-                                <td>{{ agenda.fechaAtencion }}</td>
-                            </tr>
-                            <tr>
-                                <th>Hora de Atención:</th>
-                                <td>{{ agenda.horaAtencion }}</td>
-                            </tr>
-                            <tr>
-                                <th>Tipo de Agenda:</th>
-                                <td>{{ agenda.idTipoAgenda }}</td>
-                            </tr>
-                            <tr>
-                                <th>Taller:</th>
-                                <td>{{ agenda.idTaller }}</td>
-                            </tr>
-                            <tr>
-                                <th>Patente Vehículo:</th>
-                                <td>{{ agenda.idVehiculo }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+<div class="container">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4"><i class="fa-solid fa-calendar-check me-2" style="color:var(--g-accent)"></i>Tu reserva</h2>
+                    <dl class="row g-3 mb-0">
+                        <dt class="col-5 text-secondary fw-semibold">Fecha</dt><dd class="col-7 mb-0">{{ agenda.fechaAtencion|date:"l d \d\e F, Y" }}</dd>
+                        <dt class="col-5 text-secondary fw-semibold">Hora</dt><dd class="col-7 mb-0">{{ agenda.horaAtencion|time:"H:i" }}</dd>
+                        <dt class="col-5 text-secondary fw-semibold">Servicio</dt><dd class="col-7 mb-0">{{ agenda.idTipoAgenda }}</dd>
+                        <dt class="col-5 text-secondary fw-semibold">Taller</dt><dd class="col-7 mb-0">{{ agenda.idTaller }}</dd>
+                        <dt class="col-5 text-secondary fw-semibold">Vehículo</dt><dd class="col-7 mb-0"><code>{{ agenda.idVehiculo }}</code></dd>
+                    </dl>
+                    {% if reporte_pago %}
+                    <hr class="my-4">
+                    <h2 class="h4 mb-3"><i class="fa-solid fa-file-invoice me-2" style="color:var(--g-accent)"></i>Detalle de la reparación</h2>
+                    <p class="text-secondary mb-0">{{ reporte_pago.comentario }}</p>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
 
-                <!-- Detalles del Reporte de Pago -->
-                {% if reporte_pago %}
-                    <h2 class="card-title mt-4 fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle del Reporte de Pago</h2>
-                    <div class="table-responsive ">
-                        <table class="table table-bordered shadow-lg">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 40%;">Comentario:</th>
-                                    <td>{{ reporte_pago.comentario }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Monto a pagar (CLP):</th>
-                                    <td>${{ reporte_pago.monto|stringformat:".0f"|floatformat }}</td>
-                                </tr>
-                                {% if monto_dolares %}
-                                <tr>
-                                    <th>Monto a pagar (USD):</th>
-                                    <td>${{ monto_dolares }}</td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4">Resumen de pago</h2>
+                    {% if reporte_pago %}
+                    <div class="d-flex justify-content-between align-items-end mb-1">
+                        <span class="text-secondary">Total (CLP)</span>
+                        <span class="display-font" style="font-size:2.4rem;line-height:1">${{ reporte_pago.monto|floatformat:"0g" }}</span>
                     </div>
-                {% endif %}
+                    {% if monto_dolares %}
+                    <div class="d-flex justify-content-between text-secondary small mb-4"><span>Equivalente</span><span>≈ US$ {{ monto_dolares }}</span></div>
+                    {% else %}<div class="mb-4"></div>{% endif %}
+
+                    {% if agenda.estado_id == 3 %}
+                    <div class="alert alert-success mb-0"><i class="fa-solid fa-circle-check me-2"></i>Esta reserva ya está pagada.</div>
+                    {% elif paypal_client_id and monto_dolares %}
+                    <div id="btnPaypal"></div>
+                    {% else %}
+                    <button type="button" class="btn btn-primary btn-lg w-100" id="btnDemoPago"><i class="fa-solid fa-lock me-2"></i>Pagar ahora (modo demo)</button>
+                    <p class="text-secondary small mt-3 mb-0">Modo demostración: no se realiza ningún cargo. Define <code>PAYPAL_CLIENT_ID</code> para habilitar PayPal.</p>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-info mb-0">El taller aún no emite el detalle de pago de esta reserva.</div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="text-center mt-3 mb-2">
-                <div id="btnPaypal"></div>
-            </div>
+            <a href="{% url 'mis_reservas' %}" class="btn btn-ghost w-100 mt-3"><i class="fa-solid fa-arrow-left me-2"></i>Volver a mis reservas</a>
         </div>
     </div>
 </div>
-
 {% endblock contenido %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
-
+{% if paypal_client_id and monto_dolares %}<script src="https://www.paypalobjects.com/api/checkout.js"></script>{% endif %}
 <script>
     function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+        var v = null;
+        document.cookie.split(';').forEach(function (c) {
+            c = c.trim();
+            if (c.substring(0, name.length + 1) === name + '=') v = decodeURIComponent(c.substring(name.length + 1));
+        });
+        return v;
     }
 
+    function confirmarPago() {
+        $.ajax({
+            type: 'POST',
+            url: '{% url "actualizar_estado_agenda" agenda.idAgenda %}',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: '¡Pago realizado!',
+                        text: 'Tu reserva quedó como «Pagado». Descargaremos tu comprobante.',
+                        icon: 'success', confirmButtonText: 'Continuar', confirmButtonColor: '#7c5cff'
+                    }).then(function () {
+                        var link = document.createElement('a');
+                        link.href = '{% url "generar_documento_word" agenda.idAgenda %}';
+                        link.download = response.filename;
+                        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                        setTimeout(function () { window.location.href = '{% url "mis_reservas" %}'; }, 600);
+                    });
+                } else {
+                    Swal.fire({ title: 'Error', text: 'No se pudo registrar el pago.', icon: 'error', confirmButtonColor: '#7c5cff' });
+                }
+            },
+            error: function () {
+                Swal.fire({ title: 'Error', text: 'Error en la solicitud.', icon: 'error', confirmButtonColor: '#7c5cff' });
+            }
+        });
+    }
+
+    var demo = document.getElementById('btnDemoPago');
+    if (demo) demo.addEventListener('click', confirmarPago);
+
+    {% if paypal_client_id and monto_dolares %}
     paypal.Button.render({
         env: 'sandbox',
-        client: {
-            sandbox: 'AUdczilLjDrMGcZtY3F9Xqa4WAmOmJQki8I3sWy9rTnnuxmiPWNOW1RACinASsIaWMDt8QPAbg0JQ1EL',
-            production: 'demo_production_client_id'
-        },
+        client: { sandbox: '{{ paypal_client_id|escapejs }}' },
         locale: 'es_CL',
-        style: {
-            size: 'large',
-            color: 'black',
-            shape: 'rect'
-        },
+        style: { size: 'large', color: 'black', shape: 'pill' },
         commit: true,
         payment: function (data, actions) {
-            return actions.payment.create({
-                transactions: [{
-                    amount: { 
-                        total: '{{ monto_dolares }}', 
-                        currency: 'USD'
-                    }
-                }]
-            });
+            return actions.payment.create({ transactions: [{ amount: { total: '{{ monto_dolares }}', currency: 'USD' } }] });
         },
-        onAuthorize: function (data, actions) {
-            return actions.payment.execute().then(function () {
-                var csrftoken = getCookie('csrftoken');
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        xhr.setRequestHeader('X-CSRFToken', csrftoken);
-                    }
-                });
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "actualizar_estado_agenda" agenda.idAgenda %}', 
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: '¡EL PAGO SE REALIZÓ CON ÉXITO!',
-                                text: 'El estado de su agenda ha sido actualizado a "Pagado".',
-                                icon: 'success',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Confirmar'
-                            }).then(function () {
-                                // Descargar el archivo Word
-                                var link = document.createElement('a');
-                                link.href = '{% url "generar_documento_word" agenda.idAgenda %}';
-                                link.download = response.filename;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                                window.location.href = '{% url "mis_reservas" %}';
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'No se pudo realizar el pago.',
-                                icon: 'error',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Confirmar'
-                            });
-                        }
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.error(errorThrown);
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'ERROR EN LA SOLICITUD!',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Confirmar'
-                        });
-                    }
-                });
-            });
-        },
-        onCancel: function(data) {
-            Swal.fire({
-                title: '¡CANCELADO!',
-                text: 'Transacción cancelada!',
-                icon: 'error',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirmar'
-            });
-        },
-        onError: function(err) {
-            console.error(err);
-            Swal.fire({
-                title: 'Error',
-                text: 'Ha ocurrido un error con el pago',
-                icon: 'error',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirmar'
-            });
-        }
+        onAuthorize: function (data, actions) { return actions.payment.execute().then(confirmarPago); },
+        onCancel: function () { Swal.fire({ title: 'Cancelado', text: 'La transacción fue cancelada.', icon: 'info', confirmButtonColor: '#7c5cff' }); },
+        onError: function (err) { console.error(err); Swal.fire({ title: 'Error', text: 'Ocurrió un error con el pago.', icon: 'error', confirmButtonColor: '#7c5cff' }); }
     }, '#btnPaypal');
+    {% endif %}
 </script>
 {% endblock js %}

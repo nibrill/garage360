@@ -2,21 +2,36 @@
 {% block title %}Iniciar sesión · Garage360{% endblock %}
 
 {% block contenido %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5">
-            <form method="POST" class="p-4 p-md-5">
-                {% csrf_token %}
-                <h1 class="h3 fw-bold text-center mb-4">Inicia sesión</h1>
-                {% if form.errors %}
-                <div class="alert alert-danger">Usuario o contraseña incorrectos.</div>
-                {% endif %}
-                <input type="hidden" name="next" value="{{ next }}">
-                {% include 'core/_form_fields.html' %}
-                <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Entrar</button>
-                <p class="text-center text-secondary mt-4 mb-0">¿No tienes cuenta? <a href="{% url 'register' %}" class="fw-semibold">Regístrate</a></p>
-            </form>
+<section class="auth-shell">
+    <div class="aurora"><i></i></div>
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-side">
+                <div>
+                    <span class="pill" style="background:rgba(255,255,255,.18);color:#fff;border-color:transparent"><i class="fa-solid fa-lock"></i> Acceso seguro</span>
+                    <h2 class="mt-4">Bienvenido de vuelta</h2>
+                    <p style="opacity:.85">Gestiona tus reservas y vehículos desde cualquier dispositivo.</p>
+                </div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> Reserva en segundos</li>
+                    <li><i class="fa-solid fa-check"></i> Historial de tus reparaciones</li>
+                    <li><i class="fa-solid fa-check"></i> Comprobantes descargables</li>
+                </ul>
+            </div>
+            <div class="auth-form">
+                <form method="POST">
+                    {% csrf_token %}
+                    <h1 class="h2 mb-1">Inicia sesión</h1>
+                    <p class="text-secondary mb-4">¿Primera vez? <a href="{% url 'register' %}" class="fw-semibold">Crea tu cuenta</a></p>
+                    {% if form.errors %}
+                    <div class="alert alert-danger">Usuario o contraseña incorrectos.</div>
+                    {% endif %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% include 'core/_form_fields.html' %}
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Entrar <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock contenido %}

@@ -1,78 +1,78 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% block title %}Mapa de talleres · Garage360{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-     
-<style> 
-    #map { z-index: 0; }
-</style>
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
+
 {% block contenido %}
-<div id="map"></div>
+<div class="map-shell">
+    <div id="map" role="application" aria-label="Mapa de talleres"></div>
+    <aside class="map-panel glass-card">
+        <h2><i class="fa-solid fa-location-crosshairs me-2" style="color:var(--g-accent)"></i>Talleres cerca</h2>
+        <div class="map-list" id="map-list"></div>
+    </aside>
+</div>
 {% endblock %}
+
 {% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-crossorigin=""></script>  
-
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{{ talleres_json|json_script:"talleres-data" }}
 <script>
-    var map = L.map('map').setView([-33.4489, -70.6693], 12); 
-    L.control.scale().addTo(map);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+    var map = L.map('map', { zoomControl: false }).setView([-33.4489, -70.6693], 12);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.control.scale({ position: 'bottomright' }).addTo(map);
+
+    // Teselas de OpenStreetMap; en modo oscuro se aplica un filtro CSS (ver style.css)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
     }).addTo(map);
 
-    function handleLocationError(error) {
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                console.warn("El usuario ha denegado la solicitud de geolocalización.");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                console.warn("La información de ubicación no está disponible.");
-                break;
-            case error.TIMEOUT:
-                console.warn("La solicitud de ubicación ha caducado.");
-                break;
-            case error.UNKNOWN_ERROR:
-                console.warn("Se ha producido un error desconocido.");
-                break;
-        }
-    }
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var userLat = position.coords.latitude;
-            var userLng = position.coords.longitude;
-            var userMarker = L.marker([userLat, userLng], {draggable: true}).addTo(map)
-                .bindPopup("Estás aquí").openPopup();
-            map.setView([userLat, userLng], 13);
-        }, handleLocationError);
-    } else {
-        console.warn("La geolocalización no es soportada por este navegador.");
-    }
-
-    var talleres = JSON.parse('{{ talleres_json|escapejs }}');
-    talleres.forEach(function(taller) {
-        var fields = taller.fields;
-        if (fields.latitud && fields.longitud) {
-            var iconUrl = '{% static "core/img/icono-mapa-taller.jpg" %}';
-            var tallerIcon = L.icon({
-                iconUrl: iconUrl,
-                iconSize: [38, 38],
-                iconAnchor: [19, 38],
-                popupAnchor: [0, -38]
-            });
-
-            var marker = L.marker([fields.latitud, fields.longitud], {icon: tallerIcon}).addTo(map)
-                .bindPopup('<b>' + fields.nombreTaller + '</b><br>' + fields.direccion +
-                           '<br><a href="/agendar_hora/' + taller.pk + '/" class="btn btn-primary btn-sm mt-2 text-white">Agendar Hora</a>');
-        }
+    var pin = L.divIcon({
+        className: '', html: '<div class="pin"><i class="fa-solid fa-wrench"></i></div>',
+        iconSize: [40, 40], iconAnchor: [20, 40], popupAnchor: [0, -40]
     });
-</script> 
 
+    // Los datos llegan serializados por Django (json_script los escapa de forma segura)
+    var talleres = JSON.parse(document.getElementById('talleres-data').textContent);
+    if (typeof talleres === 'string') talleres = JSON.parse(talleres);
+    var list = document.getElementById('map-list'), markers = [], bounds = [];
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+
+    talleres.forEach(function (t, idx) {
+        var f = t.fields;
+        if (!f.latitud || !f.longitud) return;
+        var ll = [f.latitud, f.longitud]; bounds.push(ll);
+        var m = L.marker(ll, { icon: pin }).addTo(map).bindPopup(
+            '<b>' + esc(f.nombreTaller) + '</b><br>' + esc(f.direccion) +
+            '<br><a href="/agendar_hora/' + t.pk + '/" class="btn btn-primary btn-sm mt-2" style="color:#fff">Agendar hora</a>'
+        );
+        markers.push(m);
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'map-item';
+        b.innerHTML = '<span class="ico" style="width:54px;height:54px;border-radius:12px;display:grid;place-items:center;background:var(--g-grad);color:#fff;flex:none"><i class="fa-solid fa-wrench"></i></span>' +
+            '<span><b>' + esc(f.nombreTaller) + '</b><small>' + esc(f.direccion) + '</small></span>';
+        b.addEventListener('click', function () {
+            map.flyTo(ll, 15, { duration: .8 }); m.openPopup();
+            document.querySelectorAll('.map-item').forEach(function (x) { x.classList.remove('active'); });
+            b.classList.add('active');
+        });
+        list.appendChild(b);
+    });
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [80, 80], maxZoom: 14 });
+    if (!bounds.length) list.innerHTML = '<p class="text-secondary p-2">Aún no hay talleres con ubicación.</p>';
+
+    // Ubicación del usuario (opcional)
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (p) {
+            L.circleMarker([p.coords.latitude, p.coords.longitude], { radius: 8, color: '#fff', weight: 3, fillColor: '#22d3ee', fillOpacity: 1 })
+                .addTo(map).bindPopup('Estás aquí');
+        }, function () {});
+    }
+</script>
 {% endblock %}

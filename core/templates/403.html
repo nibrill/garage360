@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block title %}Acceso restringido · Garage360{% endblock %}
+{% block contenido %}
+<section class="error-shell">
+    <div class="aurora"><i></i></div>
+    <div class="container">
+        <div class="error-code">403</div>
+        <h1 class="h2 mb-3">Acceso restringido</h1>
+        <p class="text-secondary mb-4">{{ exception|default:"No tienes permiso para ver esta página." }}</p>
+        <a href="{% url 'index' %}" class="btn btn-primary btn-lg">Volver al inicio</a>
+    </div>
+</section>
+{% endblock %}
