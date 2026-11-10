@@ -2,7 +2,7 @@
 import requests
 from django.conf import settings
 
-USER_AGENT = 'TallerYa/1.0 (proyecto educativo; https://github.com/nibrill/tallerya)'
+USER_AGENT = 'Garage360/1.0 (proyecto educativo; https://github.com/nibrill/garage360)'
 TIMEOUT = 8
 
 

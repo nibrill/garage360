@@ -4,7 +4,8 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Agenda, Contacto, ReportePago, Taller, Ticket, UsuarioCustom, Vehiculo
+from .models import (Agenda, Comuna, Contacto, Marca, ReportePago, Taller, TipoAgenda, TipoVehiculo, Ticket,
+                     UsuarioCustom, Vehiculo)
 
 
 def proximo_dia_habil():
@@ -125,14 +126,15 @@ class ReservasTest(BaseTest):
         vehiculo = Vehiculo.objects.get(patente='ABCD12')
         return self.client.post(reverse('agendar_hora', args=[self.taller.idTaller]), {
             'fechaAtencion': fecha.isoformat(), 'horaAtencion': hora,
-            'idTipoAgenda': 1, 'idVehiculo': vehiculo.idVehiculo,
+            'idTipoAgenda': TipoAgenda.objects.first().pk, 'idVehiculo': vehiculo.idVehiculo,
         })
 
     def test_reserva_y_hora_ocupada(self):
         self.login('cliente')
         dia = proximo_dia_habil()
         r = self.reservar(dia)
-        self.assertRedirects(r, reverse('mis_reservas'))
+        errores = r.context['form'].errors if r.status_code == 200 else ''
+        self.assertRedirects(r, reverse('mis_reservas'), msg_prefix=str(errores))
         r = self.reservar(dia)  # misma hora: rechazada
         self.assertEqual(r.status_code, 200)
         self.assertEqual(Agenda.objects.filter(fechaAtencion=dia, horaAtencion='11:00').count(), 1)
@@ -171,7 +173,7 @@ class FormulariosTest(BaseTest):
         r = self.client.post(reverse('register'), {
             'username': 'nuevo_user', 'run': '12345678-9', 'correo': 'nuevo@example.com',
             'pnombre': 'Nuevo', 'ap_paterno': 'Usuario', 'direccion': 'Calle 1',
-            'comuna': 1, 'password1': 'Clave-segura-987', 'password2': 'Clave-segura-987',
+            'comuna': Comuna.objects.first().pk, 'password1': 'Clave-segura-987', 'password2': 'Clave-segura-987',
         })
         self.assertRedirects(r, reverse('login'))
         self.assertEqual(UsuarioCustom.objects.get(username='nuevo_user').idRol.nombreRol, 'Cliente')
@@ -179,7 +181,8 @@ class FormulariosTest(BaseTest):
     def test_vehiculo_patente_minuscula(self):
         self.login('cliente')
         self.client.post(reverse('annadir_vehiculo'), {
-            'patente': 'wxyz99', 'modelo': 'Yaris', 'anno': 2020, 'idMarca': 1, 'idTipoVehiculo': 1})
+            'patente': 'wxyz99', 'modelo': 'Yaris', 'anno': 2020, 'idMarca': Marca.objects.first().pk,
+            'idTipoVehiculo': TipoVehiculo.objects.first().pk})
         self.assertTrue(Vehiculo.objects.filter(patente='WXYZ99').exists())
 
     def test_contacto_no_requiere_servicios_externos(self):
@@ -201,4 +204,4 @@ class SeoTest(BaseTest):
     def test_metadatos_en_inicio(self):
         r = self.client.get(reverse('index'))
         self.assertContains(r, 'og:title')
-        self.assertContains(r, 'TallerYa')
+        self.assertContains(r, 'Garage360')

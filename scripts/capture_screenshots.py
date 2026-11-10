@@ -17,7 +17,7 @@ from playwright.sync_api import sync_playwright
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:8765').rstrip('/')
 OUT = Path(__file__).resolve().parent.parent / 'docs' / 'screenshots'
-PASSWORD = 'tallerya123'  # clave de las cuentas creadas por `seed --demo`
+PASSWORD = 'garage360123'  # clave de las cuentas creadas por `seed --demo`
 
 # (archivo, usuario o None, ruta, esperar selector opcional, página completa)
 DESKTOP = [

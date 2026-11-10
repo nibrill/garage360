@@ -27,7 +27,7 @@ MARCAS = [
     'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Peugeot', 'Renault', 'Subaru', 'Suzuki', 'Toyota',
     'Volkswagen', 'Volvo', 'Jeep', 'Land Rover', 'MINI', 'Porsche', 'Tesla', 'Lexus', 'Dodge', 'Ram',
 ]
-DEMO_PASSWORD = 'tallerya123'
+DEMO_PASSWORD = 'garage360123'
 
 DEMO_TALLERES = [
     ('Mecánica Express Providencia', 'Mantenciones al día, frenos, suspensión y diagnóstico computarizado.',
@@ -69,7 +69,7 @@ class Command(BaseCommand):
 
     def usuario(self, username, rol, nombre, apellido, comuna, **extra):
         user, creado = UsuarioCustom.objects.get_or_create(username=username, defaults=dict(
-            run='11111111-1', correo=f'{username}@tallerya.test', email=f'{username}@tallerya.test',
+            run='11111111-1', correo=f'{username}@garage360.test', email=f'{username}@garage360.test',
             telefono='+56911111111', pnombre=nombre, ap_paterno=apellido, direccion='Calle Demo 123',
             idRol=rolUsuario.objects.get(nombreRol=rol), idComuna=Comuna.objects.get(nombreComuna=comuna),
             **extra))
