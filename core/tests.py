@@ -205,3 +205,24 @@ class SeoTest(BaseTest):
         r = self.client.get(reverse('index'))
         self.assertContains(r, 'og:title')
         self.assertContains(r, 'Garage360')
+
+
+class InterfazTest(BaseTest):
+    def test_home_tiene_buscador_y_tema(self):
+        r = self.client.get(reverse('index'))
+        self.assertContains(r, 'role="search"')
+        self.assertContains(r, 'data-theme-toggle')
+        self.assertContains(r, 'core/js/main.js')
+
+    def test_mapa_entrega_talleres_como_json(self):
+        self.login('cliente')
+        r = self.client.get(reverse('mapa'))
+        self.assertContains(r, 'id="talleres-data"')
+        self.assertContains(r, 'Express Providencia')
+
+    def test_pago_en_modo_demo_sin_paypal(self):
+        self.login('cliente')
+        reserva = Agenda.objects.get(estado_id=2)
+        r = self.client.get(reverse('detalle_reserva', args=[reserva.idAgenda]))
+        self.assertContains(r, 'btnDemoPago')
+        self.assertNotContains(r, 'paypalobjects.com')
