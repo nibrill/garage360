@@ -41,6 +41,13 @@ erDiagram
 
 `Contacto` almacena los mensajes del formulario público de contacto.
 
+## Interfaz
+
+- **Sistema de diseño** en `core/static/core/css/style.css`: variables CSS (`--g-*`) con tema oscuro/claro mediante `data-bs-theme` de Bootstrap 5.3. Componentes reutilizables: `.glass-card`, `.tile` (bento), `.taller-card`, `.page-hero`, `.filter-bar`, `.auth-card`, `.pill`, `.estado-pill`.
+- **JavaScript** en `core/static/core/js/main.js` (sin dependencias): cambio de tema, animaciones al hacer scroll (`.reveal`), contadores, brillo bajo el cursor y confirmaciones (`data-confirm`).
+- Las plantillas heredan de `core/base.html`; los formularios se renderizan con `core/_form_fields.html`.
+- Se respeta `prefers-reduced-motion` y `prefers-color-scheme`.
+
 ## Roles y permisos
 
 | Rol | Acceso |

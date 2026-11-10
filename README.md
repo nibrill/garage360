@@ -15,7 +15,7 @@ Directorio geolocalizado, agendamiento de citas, reportes de pago y paneles por 
 ![Docker](https://img.shields.io/badge/Docker-compose-2496ed?logo=docker&logoColor=white)
 [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-6a3aa2.svg)](LICENSE)
 
-![Página de inicio de Garage360](docs/screenshots/01-inicio.png)
+![Página de inicio de Garage360 (modo oscuro)](docs/screenshots/01-inicio.png)
 
 </div>
 
@@ -31,15 +31,15 @@ Directorio geolocalizado, agendamiento de citas, reportes de pago y paneles por 
 |---|---|
 | Backend | Django 5.2 / 6.0, Django REST Framework, Python 3.10+ |
 | Base de datos | **MySQL 8** (utf8mb4, InnoDB) · driver PyMySQL |
-| Frontend | HTML5 + plantillas Django, Bootstrap 5, JavaScript, Leaflet (mapas) |
+| Frontend | HTML5 + plantillas Django, Bootstrap 5, sistema de diseño propio (CSS), JavaScript sin dependencias, Leaflet |
 | Infraestructura | Docker / Docker Compose, Gunicorn, WhiteNoise |
-| Calidad | 21 tests automáticos, GitHub Actions (MySQL 8 + SQLite) |
+| Calidad | 24 tests automáticos, GitHub Actions (MySQL 8 + SQLite) |
 
 ## ✨ Características
 
 | Rol | Qué puede hacer |
 |---|---|
-| 🚗 **Cliente** | Registrarse, guardar sus vehículos, buscar talleres por nombre o comuna, ver el mapa, **reservar hora** (lun–vie, 9:00–18:00, sin doble reserva), pagar en línea (PayPal sandbox) y descargar su comprobante en Word. |
+| 🚗 **Cliente** | Registrarse, guardar sus vehículos, buscar talleres por nombre o comuna, ver el mapa, **reservar hora** (lun–vie, 9:00–18:00, sin doble reserva), pagar en línea (PayPal sandbox o modo demo) y descargar su comprobante en Word. |
 | 🔧 **Encargado de taller** | Ver las reservas de su taller, emitir el reporte de pago de cada reparación y enviar tickets al administrador. |
 | 🛡️ **Administrador** | Panel con métricas; CRUD de talleres (con geocodificación de la dirección), usuarios, tickets y mensajes de contacto. |
 
@@ -47,25 +47,35 @@ Además: **API REST** con permisos por rol, SEO básico (Open Graph, `robots.txt
 
 ## 📸 Capturas de pantalla
 
-| Talleres | Mapa interactivo |
+Interfaz **oscura por defecto** con modo claro, animaciones suaves, vidrio esmerilado y diseño responsive. El tema se cambia con el botón del menú y se recuerda entre visitas.
+
+| Modo oscuro | Modo claro |
 |---|---|
-| ![Listado de talleres](docs/screenshots/03-talleres.png) | ![Mapa de talleres](docs/screenshots/04-mapa.png) |
-| **Reservar hora** | **Mis reservas** |
-| ![Reservar hora](docs/screenshots/05-reservar-hora.png) | ![Mis reservas](docs/screenshots/06-mis-reservas.png) |
-| **Panel del encargado** | **Panel de administración** |
-| ![Panel del encargado](docs/screenshots/08-panel-encargado.png) | ![Panel de administración](docs/screenshots/09-panel-admin.png) |
+| ![Inicio oscuro](docs/screenshots/01-inicio.png) | ![Inicio claro](docs/screenshots/02-inicio-claro.png) |
+
+| Directorio de talleres | Mapa interactivo |
+|---|---|
+| ![Talleres](docs/screenshots/05-talleres.png) | ![Mapa](docs/screenshots/06-mapa.png) |
+| **Reservar hora** | **Pago de la reparación** |
+| ![Reservar hora](docs/screenshots/07-reservar-hora.png) | ![Pago](docs/screenshots/09-pago.png) |
+| **Mis reservas** | **Panel del encargado** |
+| ![Mis reservas](docs/screenshots/08-mis-reservas.png) | ![Panel del encargado](docs/screenshots/11-panel-encargado.png) |
+| **Panel de administración** | **Inicio de sesión** |
+| ![Administración](docs/screenshots/12-panel-admin.png) | ![Login](docs/screenshots/03-login.png) |
 
 <details>
 <summary>Versión móvil y más pantallas</summary>
 
 <p>
-<img src="docs/screenshots/m1-inicio.png" width="260" alt="Inicio en móvil">
-<img src="docs/screenshots/m2-talleres.png" width="260" alt="Talleres en móvil">
+<img src="docs/screenshots/m1-inicio.png" width="240" alt="Inicio en móvil">
+<img src="docs/screenshots/m2-talleres.png" width="240" alt="Talleres en móvil">
+<img src="docs/screenshots/m3-mapa.png" width="240" alt="Mapa en móvil">
 </p>
 
-![Mis vehículos](docs/screenshots/07-mis-vehiculos.png)
-![Administración de talleres](docs/screenshots/10-admin-talleres.png)
-![Inicio de sesión](docs/screenshots/02-login.png)
+![Registro](docs/screenshots/04-registro.png)
+![Mis vehículos](docs/screenshots/10-mis-vehiculos.png)
+![Administración de talleres](docs/screenshots/13-admin-talleres.png)
+![Talleres en modo claro](docs/screenshots/14-talleres-claro.png)
 
 </details>
 
@@ -136,6 +146,7 @@ Todo se configura con variables de entorno (ver [`.env.example`](.env.example)):
 | `DB_ENGINE` | `mysql` o `sqlite` (solo desarrollo) | `mysql` |
 | `DB_NAME` `DB_HOST` `DB_PORT` `DB_USER` `DB_PASSWORD` | Conexión MySQL | `garage360` · `127.0.0.1` · `3306` · `garage360` · `garage360_dev` |
 | `OPENCAGE_API_KEY` | Opcional. Sin ella se geocodifica con OpenStreetMap (Nominatim) | — |
+| `PAYPAL_CLIENT_ID` | Opcional. Client ID de PayPal sandbox; sin él el pago funciona en modo demo | — |
 | `SERVE_MEDIA` | `True` sirve `/media/` desde Django (solo demos) | `False` |
 
 ## 🧪 Tests y calidad
@@ -144,7 +155,7 @@ Todo se configura con variables de entorno (ver [`.env.example`](.env.example)):
 python manage.py test        # el usuario de BD necesita permisos sobre test_garage360 (ver database/init.sql)
 ```
 
-21 tests cubren páginas por rol, permisos, reservas (horas ocupadas, fines de semana, fechas pasadas), reporte de pago, API y formularios. Se ejecutan en cada *push* contra **MySQL 8** y SQLite con GitHub Actions.
+24 tests cubren páginas por rol, permisos, reservas (horas ocupadas, fines de semana, fechas pasadas), reporte de pago, API y formularios. Se ejecutan en cada *push* contra **MySQL 8** y SQLite con GitHub Actions.
 
 ## 🌐 Despliegue
 

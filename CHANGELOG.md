@@ -2,6 +2,24 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [2.1.0] - 2026-11-10
+
+Rediseño completo de la interfaz.
+
+### Agregado
+- Sistema de diseño propio: tema **oscuro por defecto y modo claro** (con preferencia guardada), tipografía Inter + Plus Jakarta Sans, vidrio esmerilado, fondos aurora y animaciones de entrada.
+- Nueva página de inicio: buscador, tarjetas flotantes, marquesina de servicios, bento de características, pasos, talleres destacados, FAQ y llamada a la acción.
+- Navegación flotante con estado activo, menú de usuario con avatar y pie de página completo.
+- Mapa a pantalla completa con panel lateral de talleres y marcadores propios.
+- Páginas de acceso y registro en formato dividido; páginas de error 403, 404 y 500.
+- Pantalla de pago renovada; **modo demo** cuando no hay `PAYPAL_CLIENT_ID`.
+- Confirmaciones de acciones con `data-confirm` (SweetAlert2).
+
+### Cambiado
+- Páginas de tickets, mensajes, panel del encargado, contacto y «sobre nosotros» reescritas.
+- El Client ID de PayPal sale del HTML y pasa a la variable de entorno `PAYPAL_CLIENT_ID`.
+- Teselas del mapa: OpenStreetMap con filtro CSS para el modo oscuro.
+
 ## [2.0.0] - 2026-11-10
 
 Renombrado de **FixSpot** a **Garage360** y renovación completa. **MySQL 8 es la base de datos del proyecto.**
