@@ -10,4 +10,4 @@ COPY . .
 RUN DJANGO_SECRET_KEY=build python manage.py collectstatic --noinput
 
 EXPOSE 8000
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed ${SEED_ARGS} && gunicorn tallerya.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed ${SEED_ARGS} && gunicorn garage360.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2"]

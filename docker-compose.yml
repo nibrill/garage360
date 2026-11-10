@@ -1,7 +1,29 @@
-# Levanta TallerYa con datos de demostración:  docker compose up --build
+# Levanta Garage360 + MySQL 8.4 con datos de demostración:  docker compose up --build
+# Web: http://localhost:8000
 services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: garage360
+      MYSQL_USER: garage360
+      MYSQL_PASSWORD: garage360_dev
+      MYSQL_ROOT_PASSWORD: root_dev
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   web:
     build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "8000:8000"
     environment:
@@ -9,5 +31,14 @@ services:
       DJANGO_SECRET_KEY: "cambia-esto-en-produccion"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
       DJANGO_CSRF_TRUSTED_ORIGINS: "http://localhost:8000,http://127.0.0.1:8000"
+      DB_ENGINE: mysql
+      DB_HOST: db
+      DB_NAME: garage360
+      DB_USER: garage360
+      DB_PASSWORD: garage360_dev
+      DJANGO_SECURE_COOKIES: "False"   # se sirve por http://localhost
       SERVE_MEDIA: "True"
       SEED_ARGS: "--demo"
+
+volumes:
+  mysql_data:
