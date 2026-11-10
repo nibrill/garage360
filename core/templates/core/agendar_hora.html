@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load ui %}
+
+{% block contenido %}
+<section class="page-hero">
+    <div class="container"><h1>Agendar</h1></div>
+</section>
+
+<div class="bg-white">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center mt-4 mb-5">
+          <div class="col-md-8">
+            <h1 class="text-center text-uppercase fw-bold">Agendar Hora en {{ taller.nombreTaller }}</h1>
+            <form method="POST" id="agendar-form" class="p-4 rounded shadow-lg">
+              {% csrf_token %}
+              <div class="form-group">
+                {% include 'core/_form_fields.html' %}
+              </div>
+              <input type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" value="Agendar hora" onclick="return confirmacionAgendar()">
+            </form>
+          </div>
+        </div>
+<br>
+    </div>
+</div>
+
+{% endblock contenido %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmacionAgendar() {
+        Swal.fire({
+            title: '¿Está seguro de agendar una hora con el taller?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, Agendar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('agendar-form').submit();
+            }
+        });
+        return false;
+    }
+
+    $(document).ready(function() {
+        $('#id_fechaAtencion').change(function() {
+            var selectedDate = $(this).val();
+            var idTaller = "{{ taller.idTaller }}";
+
+            $.ajax({
+                url: "{% url 'get_available_hours' %}",
+                data: {
+                    'date': selectedDate,
+                    'id_taller': idTaller
+                },
+                success: function(data) {
+                    var $horaAtencion = $('#id_horaAtencion');
+                    $horaAtencion.empty();
+                    $.each(data.available_hours, function(index, value) {
+                        $horaAtencion.append('<option value="' + value + '">' + value + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock js %}

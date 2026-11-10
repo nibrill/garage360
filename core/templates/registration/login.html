@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% block title %}Iniciar sesión · TallerYa{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <form method="POST" class="p-4 p-md-5">
+                {% csrf_token %}
+                <h1 class="h3 fw-bold text-center mb-4">Inicia sesión</h1>
+                {% if form.errors %}
+                <div class="alert alert-danger">Usuario o contraseña incorrectos.</div>
+                {% endif %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% include 'core/_form_fields.html' %}
+                <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Entrar</button>
+                <p class="text-center text-secondary mt-4 mb-0">¿No tienes cuenta? <a href="{% url 'register' %}" class="fw-semibold">Regístrate</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

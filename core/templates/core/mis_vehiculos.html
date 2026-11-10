@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load ui %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Mis vehículos</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<br>
+<div class="bg-page">
+    <div class="container my-5">
+        <div class="d-flex mx-auto align-items-end justify-content-end">
+            <p><a href="{% url 'annadir_vehiculo' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">AÑADIR VEHÍCULO <i class="fa-solid fa-car"></i></a></p>
+        </div>
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Patente</th>
+                                <th scope="col">Marca</th>
+                                <th scope="col">Modelo</th>
+                                <th scope="col">SubModelo</th>
+                                <th scope="col">Año</th>
+                                <th scope="col">Tipo de Vehículo</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vehiculo in vehiculos %}
+                                <tr>
+                                    <th scope="row">{{ vehiculo.idVehiculo }}</th>
+                                    <td>{{ vehiculo.patente }}</td>
+                                    <td>{{ vehiculo.idMarca }}</td>
+                                    <td>{{ vehiculo.modelo }}</td>
+                                    <td>{{ vehiculo.subModelo|default_if_none:"N/A" }}</td>
+                                    <td>{{ vehiculo.anno }}</td>
+                                    <td>{{ vehiculo.idTipoVehiculo }}</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'modificar_vehiculo' vehiculo.idVehiculo %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
+                                        <button class="btn btn-danger btn-sm rounded-5 mt-1 btnEliminar" data-id="{{ vehiculo.idVehiculo }}">Eliminar</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+        // Función para mostrar la alerta antes de eliminar el vehículo
+        $('.btnEliminar').click(function () {
+            var vehiculoId = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Está seguro de que desea eliminar el vehículo?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar vehículo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la URL de eliminación del vehículo
+                    postTo('/eliminar_vehiculo/' + vehiculoId + '/');
+                }
+            });
+        });
+    });
+</script>
+{% endblock js %}

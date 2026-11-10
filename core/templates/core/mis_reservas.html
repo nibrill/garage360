@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% load ui %}
+{% block title %}Mis reservas · TallerYa{% endblock %}
+
+{% block contenido %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Mis reservas</h1>
+        <p>Revisa el estado de tus atenciones y paga en línea.</p>
+    </div>
+</section>
+
+<div class="container">
+    {% if agendas %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th><th>Hora</th><th>Servicio</th><th>Taller</th><th>Patente</th><th>Estado</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agenda in agendas %}
+                        <tr>
+                            <td>{{ agenda.fechaAtencion|date:"d/m/Y" }}</td>
+                            <td>{{ agenda.horaAtencion|time:"H:i" }}</td>
+                            <td>{{ agenda.idTipoAgenda }}</td>
+                            <td>{{ agenda.idTaller }}</td>
+                            <td>{{ agenda.idVehiculo }}</td>
+                            <td><span class="estado-pill text-bg-{{ agenda.estado.nombreEstado|estado_clase }}">{{ agenda.estado.nombreEstado|default:"En proceso" }}</span></td>
+                            <td class="text-end">
+                                {% if agenda.estado_id == 2 %}
+                                <a href="{% url 'detalle_reserva' id_agenda=agenda.idAgenda %}" class="btn btn-primary btn-sm">Ir a pagar</a>
+                                {% elif agenda.estado_id == 3 %}
+                                <a href="{% url 'generar_documento_word' agenda.idAgenda %}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-download me-1"></i>Comprobante</a>
+                                {% else %}
+                                <small class="text-secondary">Aún no disponible para pago</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-secondary">
+        <i class="fa-regular fa-calendar fa-3x mb-3"></i>
+        <h5>Aún no tienes reservas.</h5>
+        <a href="{% url 'talleres' %}" class="btn btn-primary mt-2">Buscar un taller</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

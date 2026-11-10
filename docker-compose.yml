@@ -1,0 +1,13 @@
+# Levanta TallerYa con datos de demostración:  docker compose up --build
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "False"
+      DJANGO_SECRET_KEY: "cambia-esto-en-produccion"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DJANGO_CSRF_TRUSTED_ORIGINS: "http://localhost:8000,http://127.0.0.1:8000"
+      SERVE_MEDIA: "True"
+      SEED_ARGS: "--demo"

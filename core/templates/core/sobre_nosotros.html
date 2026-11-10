@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+
+        <!-- INICIO ENCABEZADO -->
+        <section class="page-hero">
+    <div class="container"><h1>Sobre nosotros</h1></div>
+</section>        
+        <!-- FIN ENCABEZADO -->
+
+        <!-- INICIO INFO -->
+        <div class="bg-white">
+<br>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5 mt-5">
+                        <div class="intro-excerpt">
+                            <h1 class="fw-bold mx-auto text-center">¿Quiénes somos?</h1>
+                        </div>
+                        <div class="text-center">
+                            <p>Somos un grupo de estudiantes de Duoc UC que brinda soluciones técnicas con el fin de lograr hacer de las situaciones más complicadas y estresantes un alivio.</p>
+                        </div>
+                    </div>                    
+                </div>
+
+                <div style="text-align: center;" class="mt-2">
+                    <img class="w-50 h-auto" src="{% static 'core/img/team-aboutus.webp' %}" alt="">
+                </div>
+<br>
+            </div>
+        </div>
+    <!-- INICIO CARTAS -->
+    <div class="bg-white">
+        <div class="container">
+            <div class="row justify-content-center rounded-5">
+                <div class="text-center mb-3 mt-5">
+                    <h1 class="fw-bold">¡NUESTRO EQUIPO!</h1>
+                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white  w-100 h-100" style="background-image: url('{% static 'core/img/user-man.webp' %}');">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold rounded-5">Nicolás Brill</p>
+                            <p class="card-text fw-bold rounded-5">Administrador</p>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white w-100 h-100" style="background-image: url('{% static 'core/img/user-man.webp' %}'); background-size: cover;">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold rounded-5">Nicolás Rojas</p>
+                            <p class="card-text fw-bold rounded-5">Administrador</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white w-100 h-100" style="background-image: url('{% static 'core/img/user-woman.webp' %}'); background-size: cover;">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold rounded-5">Carolina Acuña</p>
+                            <p class="card-text fw-bold rounded-5">Administradora</p>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div>
+            <div style="text-align: center;">
+                <h1 class="fw-bold">Misión</h1>
+            </div>
+    
+            <div style="text-align: center;">
+                <p class="text-center">Nuestra misión es facilitar el acceso a servicios de reparación y mantenimiento automotriz, conectando a los usuarios con talleres mecánicos confiables y de calidad a través de una plataforma eficiente y fácil de usar.
+                    <br> Nos esforzamos por simplificar el proceso de agendar citas, asegurando que cada cliente reciba el mejor servicio posible para mantener sus vehículos en óptimas condiciones.</p>
+            </div>
+<br>
+        </div>
+        <div>
+            <div style="text-align: center;">
+                <h1 class="fw-bold">Visión</h1>
+            </div>
+    
+            <div style="text-align: center;">
+                <p class="text-center">Nuestra visión es convertirnos en la plataforma líder a nivel nacional para la gestión y masificación de talleres mecánicos, siendo reconocidos por nuestra innovación, confianza y excelencia en el servicio.
+                     <br> Aspiramos a transformar la manera en que los usuarios encuentran y reservan servicios automotrices, estableciendo un nuevo estándar de calidad y eficiencia en el sector.</p>
+            </div>
+<br>
+        </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock js %}

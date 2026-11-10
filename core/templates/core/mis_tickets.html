@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .badge {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px; 
+    }
+
+    .neon-pendiente {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #f1c751; 
+    }
+
+    .neon-aceptado {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #25f025; 
+    }
+
+    .neon-rechazado {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #f74444; 
+    }
+</style>
+{% endblock css %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Tickets del taller</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+<div class="bg-page">
+    <div class="container mt-5 mb-5">
+        <div class="d-flex mx-auto align-items-end justify-content-end mb-3">
+            <a href="{% url 'crear_ticket' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">Crear Ticket</a>
+        </div>
+        {% if tickets_usuario %}
+        <div class="accordion" id="accordionExample">
+            {% for ticket in tickets_usuario %}
+            <div class="card">
+                <div class="card-header bg-dark text-white" id="heading{{ ticket.idTicket }}">
+                    <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                        <button class="btn text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ ticket.idTicket }}" aria-expanded="true" aria-controls="collapse{{ ticket.idTicket }}">
+                            {{ ticket.solicitante.pnombre }} {{ ticket.solicitante.ap_paterno }}
+                        </button>
+                        <div class="d-flex align-items-center">
+                            <p class="mb-0 me-2 text-white">{{ ticket.EstadoTicket.NombreEstado }}</p>
+                            {% if ticket.EstadoTicket.NombreEstado == "Pendiente" %}
+                                <span class="neon-pendiente bg-warning rounded-circle"></span>
+                            {% elif ticket.EstadoTicket.NombreEstado == "Aceptado" %}
+                                <span class="neon-aceptado bg-success rounded-circle"></span>
+                            {% elif ticket.EstadoTicket.NombreEstado == "Rechazado" %}
+                                <span class="neon-rechazado bg-danger rounded-circle"></span>
+                            {% endif %}
+                        </div>
+                    </h5>
+                </div>
+
+                <div id="collapse{{ ticket.idTicket }}" class="collapse" aria-labelledby="heading{{ ticket.idTicket }}" data-bs-parent="#accordionExample">
+                    <div class="card-body ">
+                        <strong>Asunto:</strong> {{ ticket.asunto }}<br>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            No tienes tickets realizados.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock js %}

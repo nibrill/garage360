@@ -1,0 +1,109 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Administración de usuarios</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<br>
+<div class="bg-page">
+    <div class="container my-5 ">
+        <div class="d-flex mx-auto align-items-end justify-content-end">
+            <p><a href="{% url 'crear_usuario' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">CREAR USUARIO <i class="fa-solid fa-user"></i></a></p>
+        </div>
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Run</th>
+                                <th scope="col">Nombre de usuario</th>
+                                <th scope="col">Nombre y apellido</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Rol Usuario</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usuario in usuarios %}
+                                <tr>
+                                    <th scope="row">{{ usuario.id }}</th>
+                                    <td>{{ usuario.run }}</td>
+                                    <td>{{ usuario.username }}</td>
+                                    <td>{{ usuario.pnombre }} {{ usuario.ap_paterno }}</td>
+                                    <td>{{ usuario.correo }}</td>
+                                    <td>{{ usuario.direccion }}</td>
+                                    <td>{{ usuario.idRol }}</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'modificar_usuario' usuario.id %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
+                                        <button type="button" class="btn btn-danger btn-sm rounded-5 mt-1" onclick="eliminarUsuario({{ usuario.id }})">Eliminar</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function eliminarUsuario(usuarioId) {
+        Swal.fire({
+            title: '¿Está seguro de que desea eliminar este usuario?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar usuario',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Envía la solicitud POST para eliminar el usuario
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "eliminar_usuario" 0 %}'.replace('0', usuarioId),
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        // Si la eliminación fue exitosa, muestra mensaje y actualiza la página
+                        Swal.fire(
+                            'Usuario eliminado',
+                            'El usuario ha sido eliminado correctamente',
+                            'success'
+                        ).then((result) => {
+                            if (result.isConfirmed || result.isDismissed) {
+                                location.reload(); // Recarga la página para reflejar los cambios
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Si hay algún error en la solicitud, muestra un mensaje de error
+                        Swal.fire(
+                            'Error',
+                            'Ha ocurrido un error al intentar eliminar el usuario',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+</script>
+{% endblock js %}

@@ -1,0 +1,186 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .accordion-button {
+        background-color: #343a40 !important;
+        color: white;
+        border: none;
+        text-align: left;
+        padding: 1rem;
+    }
+
+    .accordion-button:hover {
+        background-color: #0080ff !important;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+
+    .accordion-item {
+        border: 1px solid #6c757d;
+        border-radius: 0.25rem;
+        margin-bottom: 10px;
+    }
+
+    .accordion-item:hover {
+        border-color: #ffffff;
+    }
+
+    .accordion-item:hover .accordion-button {
+        background-color: #444c53 !important;
+    }
+
+    .accordion-body {
+        background-color: #343a40;
+        color: white;
+        padding: 1rem;
+    }
+
+    .accordion-body p {
+        margin-bottom: 0.5rem;
+    }
+
+    .neon-pendiente {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #f1c751; 
+    }
+
+    .neon-aceptado {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #25f025; 
+    }
+
+    .neon-rechazado {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #f74444; 
+    }
+</style>
+{% endblock css %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Gestión de tickets</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<br>
+<div class="bg-page">
+    <div class="container my-5">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                {% if tickets %}
+                    <div class="accordion" id="ticketsAccordion">
+                        {% for ticket in tickets %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ ticket.idTicket }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ ticket.idTicket }}" aria-expanded="false" aria-controls="collapse{{ ticket.idTicket }}">
+                                        <span>{{ ticket.solicitante.pnombre }} {{ ticket.solicitante.ap_paterno }}</span>: {{ ticket.asunto }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ ticket.idTicket }}" class="accordion-collapse collapse" aria-labelledby="heading{{ ticket.idTicket }}" data-bs-parent="#ticketsAccordion">
+                                    <div class="accordion-body ">
+                                        <p><strong>ID Ticket:</strong> {{ ticket.idTicket }}</p>
+                                        <p><strong>Solicitante:</strong> {{ ticket.solicitante.pnombre }} {{ ticket.solicitante.ap_paterno }}</p>
+                                        <p><strong>Estado:</strong>
+                                            <span>{{ ticket.EstadoTicket.NombreEstado }}</span>
+                                            {% if ticket.EstadoTicket.NombreEstado == "Pendiente" %}
+                                                <span class="neon-pendiente bg-warning"></span>
+                                            {% elif ticket.EstadoTicket.NombreEstado == "Aceptado" %}
+                                                <span class="neon-aceptado bg-success"></span>
+                                            {% elif ticket.EstadoTicket.NombreEstado == "Rechazado" %}
+                                                <span class="neon-rechazado bg-danger"></span>
+                                            {% endif %}
+                                        </p>
+                                        <p><strong>Asunto:</strong> {{ ticket.asunto }}</p>
+                                        <div class="text-center">
+                                        {% if ticket.EstadoTicket.NombreEstado == "Pendiente" %}
+                                            <form id="form-aceptar-{{ ticket.idTicket }}" action="{% url 'aceptar_ticket' ticket.idTicket %}" method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="button" class="btn btn-success btn-sm rounded-5 mt-1 btn-aceptar-ticket">Aceptar Ticket</button>
+                                            </form>
+                                            <form id="form-rechazar-{{ ticket.idTicket }}" action="{% url 'rechazar_ticket' ticket.idTicket %}" method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="button" class="btn btn-danger btn-sm rounded-5 mt-1 btn-rechazar-ticket">Rechazar Ticket</button>
+                                            </form>
+                                        {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger text-center" role="alert">
+                        En este momento no hay mensajes...
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        // Configuración de SweetAlert2 para aceptar ticket
+        $('.btn-aceptar-ticket').click(function() {
+            let formId = $(this).closest('form').attr('id');
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción aceptará el ticket seleccionado.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#${formId}`).submit();
+                }
+            });
+        });
+
+        // Configuración de SweetAlert2 para rechazar ticket
+        $('.btn-rechazar-ticket').click(function() {
+            let formId = $(this).closest('form').attr('id');
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción rechazará el ticket seleccionado.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Rechazar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#${formId}`).submit();
+                }
+            });
+        });
+    });
+</script>
+{% endblock js %}

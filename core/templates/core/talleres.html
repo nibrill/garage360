@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block title %}Talleres · TallerYa{% endblock %}
+
+{% block contenido %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Talleres</h1>
+        <p>Compara, elige y reserva tu hora.</p>
+    </div>
+</section>
+
+<div class="container">
+    <form method="get" class="row g-2 mb-4 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold" for="q">Buscar</label>
+            <input type="search" id="q" name="q" value="{{ q }}" class="form-control" placeholder="Nombre, servicio o dirección">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" for="comuna">Comuna</label>
+            <select id="comuna" name="comuna" class="form-select">
+                <option value="">Todas</option>
+                {% for c in comunas %}
+                <option value="{{ c.idComuna }}" {% if comuna_sel == c.idComuna|stringformat:"s" %}selected{% endif %}>{{ c.nombreComuna }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass me-1"></i> Filtrar</button>
+        </div>
+    </form>
+
+    <div class="row g-4">
+        {% for taller in talleres %}
+        <div class="col-md-6 col-lg-4">
+            <div class="taller-card">
+                <img class="thumb" src="{{ taller.imagen.url }}" alt="{{ taller.nombreTaller }}" loading="lazy">
+                <div class="body">
+                    <h5 class="fw-bold">{{ taller.nombreTaller }}</h5>
+                    {% if taller.idComuna %}<span class="badge badge-comuna rounded-pill align-self-start mb-2">{{ taller.idComuna }}</span>{% endif %}
+                    <p class="text-secondary">{{ taller.descripcion|truncatechars:120 }}</p>
+                    <p class="meta mb-1"><i class="fa-solid fa-location-dot"></i>{{ taller.direccion }}</p>
+                    <p class="meta mb-3"><i class="fa-solid fa-phone"></i>{{ taller.telefono }}</p>
+                    <a href="{% url 'agendar_hora' taller.idTaller %}" class="btn btn-primary mt-auto">Agendar ahora</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5 text-secondary">
+                <i class="fa-regular fa-face-frown fa-3x mb-3"></i>
+                <h5>No encontramos talleres con ese filtro.</h5>
+                <a href="{% url 'talleres' %}">Ver todos los talleres</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

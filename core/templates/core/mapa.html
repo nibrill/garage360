@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     
+<style> 
+    #map { z-index: 0; }
+</style>
+{% endblock %}
+{% block contenido %}
+<div id="map"></div>
+{% endblock %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+crossorigin=""></script>  
+
+<script>
+    var map = L.map('map').setView([-33.4489, -70.6693], 12); 
+    L.control.scale().addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    function handleLocationError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                console.warn("El usuario ha denegado la solicitud de geolocalización.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                console.warn("La información de ubicación no está disponible.");
+                break;
+            case error.TIMEOUT:
+                console.warn("La solicitud de ubicación ha caducado.");
+                break;
+            case error.UNKNOWN_ERROR:
+                console.warn("Se ha producido un error desconocido.");
+                break;
+        }
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+            var userMarker = L.marker([userLat, userLng], {draggable: true}).addTo(map)
+                .bindPopup("Estás aquí").openPopup();
+            map.setView([userLat, userLng], 13);
+        }, handleLocationError);
+    } else {
+        console.warn("La geolocalización no es soportada por este navegador.");
+    }
+
+    var talleres = JSON.parse('{{ talleres_json|escapejs }}');
+    talleres.forEach(function(taller) {
+        var fields = taller.fields;
+        if (fields.latitud && fields.longitud) {
+            var iconUrl = '{% static "core/img/icono-mapa-taller.jpg" %}';
+            var tallerIcon = L.icon({
+                iconUrl: iconUrl,
+                iconSize: [38, 38],
+                iconAnchor: [19, 38],
+                popupAnchor: [0, -38]
+            });
+
+            var marker = L.marker([fields.latitud, fields.longitud], {icon: tallerIcon}).addTo(map)
+                .bindPopup('<b>' + fields.nombreTaller + '</b><br>' + fields.direccion +
+                           '<br><a href="/agendar_hora/' + taller.pk + '/" class="btn btn-primary btn-sm mt-2 text-white">Agendar Hora</a>');
+        }
+    });
+</script> 
+
+{% endblock %}

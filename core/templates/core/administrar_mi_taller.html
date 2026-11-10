@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Panel de administración taller</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<!-- Inicio panel de administración -->
+<div class="bg-page">
+    {% if taller %}
+    <h1 class="text-center fw-bold text-uppercase">TALLER: {{ taller.nombreTaller }}</h1>
+    <div class="container mx-auto align-items-center">
+        <div class="row justify-content-center">
+            <!-- Card 1 -->
+            <div class="col-md-4 mt-3 mb-4 d-flex">
+                <div class="card mb-4 shadow-lg rounded-5 flex-fill">
+                    <div class="card-body text-center bg-dark rounded-5 d-flex flex-column">
+                        <i class="fa-solid fa-book fa-3x mb-3 text-white"></i>
+                        <h5 class="card-title text-white">RESERVAS</h5>
+                        <p class="text-white flex-grow-1">Administrar reservas en el taller.</p>
+                        <a href="{% url 'reservas_taller' taller.idTaller %}" class="btn btn-primary mt-auto">Ir</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="card mb-4 shadow-lg rounded-5 flex-fill">
+                    <div class="card-body text-center bg-dark rounded-5 d-flex flex-column">
+                        <i class="fa-solid fa-ticket fa-3x mb-3 text-white"></i>
+                        <h5 class="card-title text-white">REALIZAR TICKET</h5>
+                        <p class="text-white flex-grow-1">Hacer solicitudes al administrador para ajustes en el taller.</p>
+                        <a href="{% url 'mis_tickets' %}" class="btn btn-primary mt-auto">Ir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endif %}
+</div>
+
+
+
+{% endblock contenido %}

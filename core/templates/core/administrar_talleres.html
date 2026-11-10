@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Administración de talleres</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<br>
+<div class="bg-page">
+    <div class="container my-5 ">
+        <div class="d-flex mx-auto align-items-end justify-content-end">
+            <p><a href="{% url 'crear_taller' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">CREAR TALLER <i class="fa-solid fa-wrench"></i></a></p>
+        </div>
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Encargado del taller</th>
+                                <th scope="col">Nombre del taller</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Comuna</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for taller in talleres %}
+                                <tr>
+                                    <th scope="row">{{ taller.idTaller }}</th>
+                                    <td>{{ taller.idUsuario.pnombre }} {{ taller.idUsuario.ap_paterno }}</td>
+                                    <td>{{ taller.nombreTaller }}</td>
+                                    <td>{{ taller.telefono }}</td>
+                                    <td>{{ taller.direccion }}</td>
+                                    <td>{{ taller.idComuna }}</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'modificar_taller' taller.idTaller %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
+                                        <a href="#" class="btn btn-danger btn-sm rounded-5 mt-1 btn-eliminar" data-url="{% url 'eliminar_taller' taller.idTaller %}">Eliminar</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+        // Función para mostrar la alerta antes de eliminar el taller
+        $('.btn-eliminar').click(function (event) {
+            event.preventDefault();
+            const url = $(this).data('url');
+            Swal.fire({
+                title: '¿Está seguro de que desea eliminar este taller?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar taller',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la URL de eliminación
+                    postTo(url);
+                }
+            });
+        });
+    });
+</script>
+{% endblock js %}

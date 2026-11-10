@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Panel de administración taller</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<!-- Inicio panel de administración -->
+<div class="bg-page">
+    {% if taller %}
+    <h1 class="text-center fw-bold text-uppercase">TALLER: {{ taller.nombreTaller }}</h1>
+    <div class="container mx-auto align-items-center">
+        <div class="row justify-content-center">
+            <!-- Lista de Reservas -->
+            <div class="col-md-12 mb-4">
+                <div class="card mb-4 shadow-lg rounded-5">
+                    <div class="card-body">
+                        <h5 class="card-title">Reservas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Fecha de Atención</th>
+                                        <th scope="col">Hora de Atención</th>
+                                        <th scope="col">Tipo de Agenda</th>
+                                        <th scope="col">Cliente</th>
+                                        <th scope="col">Patente</th>
+                                        <th scope="col">Vehículo</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reserva in reservas %}
+                                    <tr>
+                                        <td>{{ reserva.idAgenda }}</td>
+                                        <td>{{ reserva.fechaAtencion }}</td>
+                                        <td>{{ reserva.horaAtencion }}</td>
+                                        <td>{{ reserva.idTipoAgenda }}</td>
+                                        <td>{{ reserva.cliente.pnombre }} {{ reserva.cliente.ap_paterno }}</td>
+                                        <td>{{ reserva.idVehiculo.patente }}</td>
+                                        <td>
+                                            {{ reserva.idVehiculo.idMarca }} {{ reserva.idVehiculo.modelo }}
+                                            {% if reserva.idVehiculo.subModelo %}
+                                                {{ reserva.idVehiculo.subModelo }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if reserva.estado.idEstado == 2 %}
+                                                <p class="fw-bold bg-warning text-white text-uppercase h5">Esperando pago...</p>
+                                            {% elif reserva.estado.idEstado == 3 %}
+                                                <p class="fw-bold bg-success text-white text-uppercase h5">¡Reparación pagada!</p>
+                                                <a href='{% url "generar_documento_word" reserva.idAgenda %}'' class="btn btn-primary">DESCARGAR DOCUMENTO</a>
+                                            {% else %}
+                                                <a href="{% url 'reporte_pago' reserva.idAgenda %}" class="btn btn-primary">Generar Reporte de Pago</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock contenido %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock js %}

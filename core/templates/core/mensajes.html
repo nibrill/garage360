@@ -1,0 +1,69 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Mensajes</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<div class="bg-page">
+    <div class="container my-5">
+        {% if mensajes %}
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for mensaje in mensajes %}
+            <div class="col">
+                <div class="card bg-dark">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0 text-white">Mensaje de {{ mensaje.nombre }} - {{ mensaje.telefono }}</h5>
+                    </div>
+                    <div class="card-body text-white">
+                        <p><strong>Nombre:</strong> {{ mensaje.nombre }}</p>
+                        <p><strong>Correo:</strong> {{ mensaje.correo }}</p>
+                        <p><strong>Teléfono:</strong> {{ mensaje.telefono }}</p>
+                        <p><strong>Asunto:</strong> {{ mensaje.asunto }}</p>
+                        <a href="#" class="btn btn-danger btn-sm rounded-5 mt-1 btn-eliminar text-white" data-url="{% url 'eliminar_mensaje' mensaje.idContacto %}">Eliminar mensaje</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            En este momento no hay mensajes...
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock contenido %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        // Función para mostrar la alerta antes de eliminar el mensaje
+        $('.btn-eliminar').click(function (event) {
+            event.preventDefault();
+            const url = $(this).data('url');
+            Swal.fire({
+                title: '¿Está seguro de que desea eliminar este mensaje?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar mensaje',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la URL de eliminación
+                    postTo(url);
+                }
+            });
+        });
+    });
+</script>
+{% endblock js %}

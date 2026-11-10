@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Ubicación</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+</head>
+<body onload="initMap()">
+    <h2>Ubicación Actual</h2>
+    <div id="map"></div>
+    <form method="post" action="{% url 'test' %}">
+        {% csrf_token %}
+        <input id="autocomplete" placeholder="Ingresa una dirección" type="text" name="address" />
+        <button type="submit">Obtener Ubicación</button>
+    </form>
+    
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+    {% if success_message %}
+        <p style="color: rgb(60, 255, 0);">{{ success_message }}</p>
+    {% endif %}
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        function initMap() {
+            var lat = {{ coordinates.lat|default:0|safe }};
+            var lng = {{ coordinates.lng|default:0|safe }};
+            
+            var map = L.map('map').setView([lat, lng], 17);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            if(lat && lng){
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup('Ubicación')
+                    .openPopup();
+            }
+        }
+
+        $(function() {
+            $("#autocomplete").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'autocomplete_address' %}",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            response(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("Error during AJAX request: ", error);
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 2,
+            });
+        });
+    </script>
+</body>
+</html>

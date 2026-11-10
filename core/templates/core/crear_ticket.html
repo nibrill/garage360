@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load ui %}
+{% block contenido %}
+
+<!-- INICIO ENCABEZADO -->
+<section class="page-hero">
+    <div class="container"><h1>Crear ticket</h1></div>
+</section>
+<!-- FIN ENCABEZADO -->
+
+<div class="bg-white">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center mt-4 mb-5">
+          <div class="col-md-8">
+            <form id="ticket-form" method="POST" class="p-4 rounded shadow-lg">
+              {% csrf_token %}
+              <div class="form-group">
+                {% include 'core/_form_fields.html' %}
+              </div>
+              <button type="button" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" id="submit-btn">Realizar ticket</button>
+            </form>
+          </div>
+        </div>
+<br>
+    </div>
+
+</div>
+
+{% endblock contenido %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.getElementById('submit-btn').addEventListener('click', function(event) {
+    event.preventDefault();
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás deshacer esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, realizar ticket',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('ticket-form').submit();
+      }
+    });
+  });
+</script>
+{% endblock js %}

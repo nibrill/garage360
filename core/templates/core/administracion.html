@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+{% block title %}Administración · TallerYa{% endblock %}
+
+{% block contenido %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Panel de administración</h1>
+        <p>Resumen de la plataforma y accesos rápidos.</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row g-3 mb-4">
+        {% for item in resumen %}
+        <div class="col-6 col-lg-3">
+            <div class="feature py-3 px-4">
+                <div class="text-secondary small text-uppercase fw-semibold">{{ item.label }}</div>
+                <div class="fs-2 fw-bold">{{ item.valor }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="feature d-flex flex-column">
+                <div class="icon"><i class="fa-solid fa-users"></i></div>
+                <h5 class="fw-bold">Usuarios</h5>
+                <p class="text-secondary flex-grow-1">Administrar usuarios y sus roles.</p>
+                <a href="{% url 'administrar_usuarios' %}" class="btn btn-primary">Abrir</a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature d-flex flex-column">
+                <div class="icon"><i class="fa-solid fa-wrench"></i></div>
+                <h5 class="fw-bold">Talleres</h5>
+                <p class="text-secondary flex-grow-1">Crear, modificar y eliminar talleres.</p>
+                <a href="{% url 'administrar_talleres' %}" class="btn btn-primary">Abrir</a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature d-flex flex-column">
+                <div class="icon"><i class="fa-solid fa-ticket"></i></div>
+                <h5 class="fw-bold">Tickets</h5>
+                <p class="text-secondary flex-grow-1">Revisar y responder solicitudes de encargados.</p>
+                <a href="{% url 'tickets' %}" class="btn btn-primary">Abrir</a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature d-flex flex-column">
+                <div class="icon"><i class="fa-solid fa-message"></i></div>
+                <h5 class="fw-bold">Mensajes</h5>
+                <p class="text-secondary flex-grow-1">Mensajes recibidos desde el formulario de contacto.</p>
+                <a href="{% url 'mensajes' %}" class="btn btn-primary">Abrir</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
